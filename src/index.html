@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lambda interpreter</title>
-	<link rel="icon" href="icon.png" type="image/png">
+	<link rel="icon" href="../res/icon.png" type="image/png">
     <link rel="stylesheet" href="lambda.css">
 	<script src="lambda.js"></script>
 	<script src="parsing.js"></script>
@@ -33,7 +33,7 @@
 	<button class="smallButton" style="position: fixed; top: 10px; left: 10px;" title="Define" id="openDefineButton">#</button>
 	
 	<a href="https://github.com/siljamdev/lambdainterpreter">
-		<img style="position: fixed; top: 10px; right: 60px; width: 40px; height: 40px;" src="github.png" alt="GitHub repo">
+		<img style="position: fixed; top: 10px; right: 60px; width: 40px; height: 40px;" src="../res/github.png" alt="GitHub repo">
 	</a>
 	
 	<div class="panelRight" id="helpPanel">
@@ -99,7 +99,7 @@
 				</div>
 				<div class="orangeReadonlyBox definePocket.show">
 					<input type=text class="orangeInput defineName" oninput="ensureOnlyLetters(this);" placeholder="Name" value="mult"></input>
-					<input type=text class="orangeInput defineDef" placeholder="Definition" value="λnmf.[n m f])"></input>
+					<input type=text class="orangeInput defineDef" placeholder="Definition" value="λnmf.[n m f]"></input>
 				</div>
 			</div>
 			<button class="smallButton" title="Add" id="addDefineButton">+</button>
