@@ -1,3 +1,5 @@
+let replaceWithChurch = true;
+
 function parseLambda(expression){
 	getDefined();
 	const {result: lam, newIndex: i} = parseLambdaIndex(expression, 0, []);
@@ -13,11 +15,11 @@ function parseLambdaIndex(expression, startPos, names){
 	if(c === '/' || c === 'λ' || c === '\\'){
 		i++;
 		const { result: variableName, newIndex: newI } = parseUntilDot(expression, i);
-		i = newI;
 		
 		if(variableName.length === 0){
-			throw new Error("No variable name for the function");
+			throw new Error("No variable name for the function: …'" + getErrSlice(expression, i, newI) + "'…");
 		}
+		i = newI;
 		
 		let j = 0;
 		let n = 0;
@@ -31,7 +33,7 @@ function parseLambdaIndex(expression, startPos, names){
 			}
 			
 			if(!/[a-z]/.test(variableName[j])){
-				throw new Error("Invalid variable name in a function");
+				throw new Error("Invalid variable name in a function: '" + variableName[j] + "' in …'" + getErrSlice(expression, i, i) + "'…");
 			}
 			j++;
 			
@@ -88,14 +90,14 @@ function parseLambdaIndex(expression, startPos, names){
 	if(c === '('){
 		i++;
 		const { result: func, newIndex: newI } = parseLambdaIndex(expression, i, names);
+		
+		if(newI >= expression.length){
+			throw new Error("Unexpected early end of the string, expected space: …'" + getErrSlice(expression, i, newI) + "'…");
+		}
 		i = newI;
 		
-		if (i >= expression.length){
-			throw new Error("Unexpected early end of the string: Expected space");
-		}
-		
-		if (expression[i] !== ' '){
-			throw new Error("Expected space");
+		if(expression[i] !== ' '){
+			throw new Error("Expected space: …'" + getErrSlice(expression, i, i) + "'…");
 		}
 		
 		i++;
@@ -111,7 +113,7 @@ function parseLambdaIndex(expression, startPos, names){
 		
 		while(true){
 			if (i >= expression.length){
-				throw new Error("Unexpected early end of the string: Expected closing bracket or space");
+				throw new Error("Unexpected early end of the string, expected closing bracket or space: …'" + getErrSlice(expression, i, i) + "'…");
 			}
 			
 			if(expression[i] !== ' '){
@@ -128,11 +130,11 @@ function parseLambdaIndex(expression, startPos, names){
 		}
 		
 		if (i >= expression.length){
-			throw new Error("Unexpected early end of the string: Expected closing bracket or space");
+			throw new Error("Unexpected early end of the string, expected closing bracket or space: …'" + getErrSlice(expression, i, i) + "'…");
 		}
 		
 		if (expression[i] !== ')'){
-			throw new Error("Expected closing bracket");
+			throw new Error("Expected closing bracket: …'" + getErrSlice(expression, i, i) + "'…");
 		}
 		
 		i++;
@@ -142,14 +144,14 @@ function parseLambdaIndex(expression, startPos, names){
 	if(c === '['){
 		i++;
 		const { result: func, newIndex: newI } = parseLambdaIndex(expression, i, names);
-		i = newI;
 		
 		if (i >= expression.length){
-			throw new Error("Unexpected early end of the string: Expected space");
+			throw new Error("Unexpected early end of the string, expected space: …'" + getErrSlice(expression, i, newI) + "'…");
 		}
+		i = newI;
 		
 		if (expression[i] !== ' '){
-			throw new Error("Expected space");
+			throw new Error("Expected space: …'" + getErrSlice(expression, i, i) + "'…");
 		}
 		
 		i++;
@@ -166,7 +168,7 @@ function parseLambdaIndex(expression, startPos, names){
 		
 		while(true){
 			if (i >= expression.length){
-				throw new Error("Unexpected early end of the string: Expected closing square bracket or space");
+				throw new Error("Unexpected early end of the string, expected closing square bracket or space: …'" + getErrSlice(expression, i, i) + "'…");
 			}
 			
 			if(expression[i] !== ' '){
@@ -184,11 +186,11 @@ function parseLambdaIndex(expression, startPos, names){
 		}
 		
 		if (i >= expression.length){
-			throw new Error("Unexpected early end of the string: Expected closing square bracket or space");
+			throw new Error("Unexpected early end of the string, expected closing square bracket or space: …'" + getErrSlice(expression, i, i) + "'…");
 		}
 		
 		if (expression[i] !== ']'){
-			throw new Error("Expected closing bracket");
+			throw new Error("Expected closing square bracket: …'" + getErrSlice(expression, i, i) + "'…");
 		}
 		
 		i++;
@@ -197,18 +199,18 @@ function parseLambdaIndex(expression, startPos, names){
 	
 	if(c === '#'){
 		const { result: name, newIndex: newI } = parseLetters(expression, i + 1);
-		i = newI;
 		
 		const value = getValue(name);
 		try{
-			const { result: expr, newIndex: newI2 } = parseLambdaIndex(value, 0, names);
+			const {result: expr} = parseLambdaIndex(value, 0, names); //Ignore index
+			i = newI;
 			return {result: expr, newIndex: i};
 		}catch(e){
-			throw new Error("Error parsing definition of " + name + ":<br>" + e);
+			throw new Error("Error parsing definition of '#" + name + "':<br>" + e + "<br> in …'" + getErrSlice(expression, i, newI) + "'…");
 		}
 	}
 	
-	throw new Error("Unknown charachter");
+	throw new Error("Unknown charachter: '" + c + "' in …'" + getErrSlice(expression, i, i) + "'…");
 }
 
 function parseNumbers(input, startIndex){
@@ -275,4 +277,8 @@ function getChurch(n){
 	}
 	
 	return f;
+}
+
+function getErrSlice(expression, start, end){
+	return expression.slice(Math.max(0, start - 3), end + 4);
 }

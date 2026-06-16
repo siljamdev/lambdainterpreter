@@ -10,9 +10,11 @@
 	<script src="parsing.js"></script>
 	<script src="reducing.js"></script>
 	<script src="define.js"></script>
+	<script src="diagram.js"></script>
 </head>
 <body>
 	<h1 class="orangeTitle">Lambda interpreter</h1>
+	
 	<textarea wrap="soft" class="orangeInput orangeScrollable" style="margin-top: 10px; width: 95%; max-height: 8%; height: 8%;" placeholder="Type an expression (e.g. /a./b.a) here..."></textarea>
 	
 	<div style="display: flex; justify-content: center; align-items: center; gap: 20px; margin-top: 10px;">
@@ -23,10 +25,18 @@
 		<button class="orangeButton" id="startButton">Start</button>
 	</div>
 	
-	<div class="orangeReadonlyBox orangeScrollable" style="height: 43vh; max-height: 43vh; overflow-y: auto; width: 95%; min-height: 30px;"></div>
+	<div id="parent" style="width: 97%; margin: 20px auto; display: flex; justify-content: center; align-items: center; gap: 0px; transition: gap 0.2s ease;">
+		<div class="orangeReadonlyBox orangeScrollable" style="height: 43vh; max-height: 43vh; width: 100%; overflow-y: auto; min-height: 30px;"></div>
+		<div class="orangeCanvas" id="diagram" style="height: 43vh; max-height: 43vh; width: 100%; min-height: 30px;"></div>
+	</div>
+	
 	<div style="display: flex; justify-content: center; gap: 30px;">
 		<button class="orangeButton" id="nextButton">Reduce next</button>
 		<button class="orangeButton" id="runButton">Reduce all</button>
+		<div style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 20px;">
+			<label for="trompToggle">Generate Tromp diagrams:</label>
+			<input type=checkbox class="orangeCheckbox" id="trompToggle">
+		</div>
 	</div>
 	
 	<button class="smallButton" style="position: fixed; top: 10px; right: 10px;" title="Help" id="openHelpButton">?</button>
@@ -58,6 +68,10 @@
 			<p style="text-align: left;">You can define useful functions in the define menu. Then, you can use them by preceding the # symbol to the name (for example #add)</p>
 			<p style="text-align: left;">The definitions should be entirely self-contained and independent, because thats how they will be parsed</p>
 			<p style="text-align: left;">There are some pre-defined functions, used with boolean logic and basic arithmetic</p>
+			<br>
+			<h3 class="orangeTitle">Tromp diagrams</h3>
+			<p style="text-align: left;">This interpreter has an option to generate <a href="https://tromp.github.io/cl/diagrams.html" class="orangeLink">Tromp diagrams</a>. These diagrams make it easy to see how the terms correlate graphically</p>
+			<p style="text-align: left;">The generated images are bitmaps and can be downloaded</p>
 			<br>
 			<h3 class="orangeTitle">Interal operation</h3>
 			<p style="text-align: left;">Internally, this interpreter works with <a href="https://en.wikipedia.org/wiki/De_Bruijn_index" class="orangeLink">De Bruijn indexing</a>. Thats the reason why there is no name retention</p>
@@ -100,6 +114,18 @@
 				<div class="orangeReadonlyBox definePocket.show">
 					<input type=text class="orangeInput defineName" oninput="ensureOnlyLetters(this);" placeholder="Name" value="mult"></input>
 					<input type=text class="orangeInput defineDef" placeholder="Definition" value="λnmf.[n m f]"></input>
+				</div>
+				<div class="orangeReadonlyBox definePocket.show">
+					<input type=text class="orangeInput defineName" oninput="ensureOnlyLetters(this);" placeholder="Name" value="pow"></input>
+					<input type=text class="orangeInput defineDef" placeholder="Definition" value="λnm.(m n)"></input>
+				</div>
+				<div class="orangeReadonlyBox definePocket.show">
+					<input type=text class="orangeInput defineName" oninput="ensureOnlyLetters(this);" placeholder="Name" value="iszero"></input>
+					<input type=text class="orangeInput defineDef" placeholder="Definition" value="λn.(n λxyz.z λxy.x)"></input>
+				</div>
+				<div class="orangeReadonlyBox definePocket.show">
+					<input type=text class="orangeInput defineName" oninput="ensureOnlyLetters(this);" placeholder="Name" value="pred"></input>
+					<input type=text class="orangeInput defineDef" placeholder="Definition" value="λnfx.(n λgh.[h g f] λz.x λz.z)"></input>
 				</div>
 			</div>
 			<button class="smallButton" title="Add" id="addDefineButton">+</button>

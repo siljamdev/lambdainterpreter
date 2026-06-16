@@ -16,11 +16,15 @@ function getValue(name){
 	if (match) {
 		return match.definition;
 	} else {
-		throw new Error("Definition not found: " + name);
+		throw new Error("Definition not found: '#" + name + "'");
 	}
 }
 
 function isThereAnyEmpty(){
 	getDefined();
 	return defined.some(c => c.name === "");
+}
+
+function ensureOnlyLetters(v){
+	v.value = v.value.replace(/[^a-zA-Z]/g, '');
 }

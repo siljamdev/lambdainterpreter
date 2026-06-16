@@ -6,7 +6,7 @@ function reduceOneAsync(expression){
 	});
 }
 
-function reduceOne(expression) {
+function reduceOne(expression){
 	if (expression instanceof application) {
 		// Try to reduce the function part first
 		if (expression.func instanceof lambda) {
@@ -61,22 +61,22 @@ function reduceAsyncStepsNonBlocking(expression, onStep, onEnd) {
 }
 
 
-function reduce(expression){
-	if(expression instanceof lambda){
-		return new lambda(reduce(expression.expression));
-	}else if(expression instanceof variable){
-		return expression;
-	}else if (expression instanceof application) {
-		const func = reduce(expression.func);
-		const arg = reduce(expression.argument);
-
-		if (func instanceof lambda) {
-			return reduce(substitute(func.expression, arg));
-		}
-
-		return new application(func, arg);
-	}
-}
+//function reduce(expression){
+//	if(expression instanceof lambda){
+//		return new lambda(reduce(expression.expression));
+//	}else if(expression instanceof variable){
+//		return expression;
+//	}else if (expression instanceof application) {
+//		const func = reduce(expression.func);
+//		const arg = reduce(expression.argument);
+//
+//		if (func instanceof lambda) {
+//			return reduce(substitute(func.expression, arg));
+//		}
+//
+//		return new application(func, arg);
+//	}
+//}
 
 function shift(term, by, from = 0) {
 	if (term instanceof variable) {

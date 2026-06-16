@@ -2,8 +2,6 @@ let helpPanel = null;
 let definePanel = null;
 let defineContainer = null;
 
-let replaceWithChurch = true;
-
 document.addEventListener("DOMContentLoaded", function (){
 	const input = document.querySelector("textarea");
 	const readonlyBox = document.querySelector(".orangeReadonlyBox");
@@ -12,6 +10,10 @@ document.addEventListener("DOMContentLoaded", function (){
 	const nextButton = document.getElementById("nextButton");
 	
 	const churchToggle = document.getElementById("churchToggle");
+	const trompToggle = document.getElementById("trompToggle");
+	
+	diagram = document.getElementById("diagram");
+	const parnt = document.getElementById("parent");
 	
 	const openHelpButton = document.getElementById("openHelpButton");
 	const closeHelpButton = document.getElementById("closeHelpButton");
@@ -29,41 +31,14 @@ document.addEventListener("DOMContentLoaded", function (){
 	const maxHeight = window.innerHeight * 0.25;
 	input.style.height = Math.min(input.scrollHeight, maxHeight) + "px";
 	
-	input.addEventListener("keydown", function(e) {
-		if(/[^a-zA-Z0-9.#λ\/\\()=\[\]\s]/.test(e.key)){
-			e.preventDefault();
-			return;
-		}
-		closeHelpPanel();
-		closeDefinePanel();
-		if(e.key !== "Enter") {
-			return;
-		}
-		e.preventDefault(); // block actual newline
-		if(evaluating && currentExpression !== null){
-			return;
-		}
-		evaluating = true;
-		parsing = true;
-		const inputExpression = input.value;
-		try{
-			const lam = parseLambda(inputExpression);
-			currentExpression = lam;
-			clearBeforeRepresenting();
-			readonlyBox.innerHTML = currentExpression.representAsString();
-			readonlyBox.scrollTop = readonlyBox.scrollHeight;
-		}catch(e){
-			readonlyBox.innerHTML = "Parsing error:<br>" + e;
-			startButton.classList.add("red");
-            setTimeout(() => startButton.classList.remove("red"), 800);
-			currentExpression = null;
-		}finally{
-			evaluating = false;
-			parsing = false;
-		}
-	});
+	function represent(){
+		counter = 0;
+		funcs = [];
+		readonlyBox.innerHTML = currentExpression.representAsString();
+		readonlyBox.scrollTop = readonlyBox.scrollHeight;
+	}
 	
-	startButton.addEventListener("click", function () {
+	function start(){
 		if(evaluating && currentExpression !== null){
 			return;
 		}
@@ -78,29 +53,56 @@ document.addEventListener("DOMContentLoaded", function (){
 			}
 			const lam = parseLambda(inputExpression);
 			currentExpression = lam;
-			clearBeforeRepresenting();
-			readonlyBox.innerHTML = currentExpression.representAsString();
-			readonlyBox.scrollTop = readonlyBox.scrollHeight;
+			drawDiagram(currentExpression);
+			represent();
 		}catch(e){
 			readonlyBox.innerHTML = "Parsing error:<br>" + e;
+			
+			input.classList.add("red");
 			startButton.classList.add("red");
+            setTimeout(() => input.classList.remove("red"), 800);
             setTimeout(() => startButton.classList.remove("red"), 800);
+			
 			currentExpression = null;
+			drawDiagram(currentExpression);
 		}finally{
 			evaluating = false;
 			parsing = false;
 		}
+	}
+	
+	input.addEventListener("keydown", function(e) {
+		if(/[^a-zA-Z0-9.#λ\/\\()\[\]\s]/.test(e.key)){
+			e.preventDefault();
+			return;
+		}
+		closeHelpPanel();
+		closeDefinePanel();
+		if(e.key !== "Enter"){
+			return;
+		}
+		e.preventDefault(); // block actual newline
+		start();
 	});
 	
-	nextButton.addEventListener("click", function () {
+	startButton.addEventListener("click", function (){
+		start();
+	});
+	
+	nextButton.addEventListener("click", function (){
 		if(currentExpression === null){
 			closeHelpPanel();
 			closeDefinePanel();
+			
 			readonlyBox.innerHTML = "No expression selected!";
-			nextButton.classList.add("red");
-            setTimeout(() => nextButton.classList.remove("red"), 800);
-			evaluating = false;
 			readonlyBox.scrollTop = readonlyBox.scrollHeight;
+			
+			nextButton.classList.add("red");
+			readonlyBox.classList.add("red");
+            setTimeout(() => nextButton.classList.remove("red"), 800);
+            setTimeout(() => readonlyBox.classList.remove("red"), 800);
+			
+			evaluating = false;
 			return;
 		}
 		
@@ -114,13 +116,13 @@ document.addEventListener("DOMContentLoaded", function (){
 		reduceOneAsync(currentExpression).then(result => {
 			if(currentExpression === result){
 				evaluating = false;
+				drawDiagram(currentExpression);
 				return;
 			}
 			currentExpression = result;
-			clearBeforeRepresenting();
-			readonlyBox.innerHTML += " β<br><br>" + currentExpression.representAsString();
-			readonlyBox.scrollTop = readonlyBox.scrollHeight;
+			represent();
 			evaluating = false;
+			drawDiagram(currentExpression);
 		});
 	});
 	
@@ -128,10 +130,15 @@ document.addEventListener("DOMContentLoaded", function (){
 		if(currentExpression === null){
 			closeHelpPanel();
 			closeDefinePanel();
+			
 			readonlyBox.innerHTML = "No expression selected!";
 			readonlyBox.scrollTop = readonlyBox.scrollHeight;
+			
 			runButton.classList.add("red");
+			readonlyBox.classList.add("red");
             setTimeout(() => runButton.classList.remove("red"), 800);
+            setTimeout(() => readonlyBox.classList.remove("red"), 800);
+			
 			evaluating = false;
 			return;
 		}
@@ -147,20 +154,31 @@ document.addEventListener("DOMContentLoaded", function (){
 			currentExpression,
 			(nextExpr) => {
 				currentExpression = nextExpr;
-				clearBeforeRepresenting();
-				readonlyBox.innerHTML += " β<br><br>" + currentExpression.representAsString();
-				readonlyBox.scrollTop = readonlyBox.scrollHeight;
+				represent();
 			},
 			() => {
 				evaluating = false;
+				drawDiagram(currentExpression);
 				runButton.classList.add("green");
-				setTimeout(() => runButton.classList.remove("green"), 1200);
+				setTimeout(() => runButton.classList.remove("green"), 800);
 			}
 		);
 	});
 	
 	churchToggle.addEventListener("change", function () {
 		replaceWithChurch = churchToggle.checked;
+	});
+	
+	trompToggle.addEventListener("change", function () {
+		doDiagrams = trompToggle.checked;
+		if(trompToggle.checked){
+			parnt.style.gap = "30px";
+			diagram.classList.add("show");
+		}else{
+			parnt.style.gap = "0px";
+			diagram.classList.remove("show");
+		}
+		drawDiagram(currentExpression);
 	});
 	
 	openHelpButton.addEventListener("click", function () {
@@ -201,15 +219,11 @@ document.addEventListener("DOMContentLoaded", function (){
 });
 
 document.addEventListener("keydown", function (e) {
-	if (e.key === "Escape"){
+	if(e.key === "Escape"){
 		closeHelpPanel();
 		closeDefinePanel();
 	}
 });
-
-function ensureOnlyLetters(v){
-	v.value = v.value.replace(/[^a-zA-Z]/g, '');
-}
 
 function openHelpPanel(){
 	closeDefinePanel();
@@ -237,13 +251,9 @@ let evaluating = false;
 let parsing = false;
 let currentExpression = null;
 
+//Only used for representing
 let counter = 0;
 let funcs = [];
-
-function clearBeforeRepresenting(){
-	counter = 0;
-	funcs = [];
-}
 
 function getNextVar(){
 	const alphabet = "abcdefghijklmnopqrstuvwxyz";
@@ -258,7 +268,7 @@ function getNextVar(){
 	return result;
 }
 
-class lambda {
+class lambda{
 	constructor(expression){
 		this.expression = expression;
 	}
@@ -271,7 +281,7 @@ class lambda {
 	}
 }
 
-class application {
+class application{
 	constructor(func, argument){
 		this.func = func;
 		this.argument = argument;
@@ -282,7 +292,7 @@ class application {
 	}
 }
 
-class variable {
+class variable{
 	constructor(index){
 		this.index = index;
 	}

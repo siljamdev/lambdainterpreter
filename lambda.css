@@ -29,6 +29,12 @@ body{
 .orangeInput:focus{
 	outline: 2px solid #BBBBBB;
 }
+.orangeInput.red{
+	border: 2px solid #BC301E;
+}
+.orangeInput.red:focus{
+	outline: 2px solid #BC301E;
+}
 
 .orangeScrollable::-webkit-scrollbar {
 	width: 10px;
@@ -66,30 +72,54 @@ body{
 	cursor: pointer;
 	border: 2px solid #843D11;
 }
-.orangeButton.green {
+.orangeButton.green{
 	background-color: #60C611;
 	border-color: #4C990D;
 }
-.orangeButton.red {
+.orangeButton.red{
 	background-color: #BC301E;
 	border-color: #8E261B;
 }
 
-.orangeReadonlyBox {
+.orangeReadonlyBox{
 	font-family: Consolas;
 	display: block;
 	text-align: left;
+	margin: 0 auto;
 	padding: 10px;
-	margin: 20px auto;
 	color: white;
 	background-color: #222;
 	border: 2px solid #565656;
 	border-radius: 10px;
-	transition: background-color 0.2s ease, border-color 0.2s ease;
+	flex: 1;
+	transition: background-color 0.2s ease, border-color 0.2s ease, flex 0.2s ease;
 }
 .orangeReadonlyBox:hover{
 	background-color: #333;
 	cursor: text;
+}
+.orangeReadonlyBox.red{
+	border: 2px solid #BC301E;
+}
+
+.orangeCanvas{
+	display: block;
+	margin: 0 0;
+	padding: 10px 0;
+	overflow: hidden;
+	background-color: black;
+	border: 2px solid #565656;
+	border-radius: 10px;
+	flex: 0;
+    opacity: 0;
+    transition: flex 0.2s ease, opacity 0.2s ease, display 0.2s ease, margin 0.2s ease, padding 0.2s ease;
+}
+
+.orangeCanvas.show{
+	margin: 0 auto;
+	padding: 10px 10px;
+	flex: 1;
+    opacity: 1;
 }
 
 .smallButton{
@@ -242,4 +272,13 @@ input[type="checkbox"].orangeCheckbox:checked:hover::before{
 
 .orangeLink:visited:hover{
 	color: #843D11;
+}
+
+.diagramImage{
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    width: 100%;
+    height: 100%;
+    display: block;
+	object-fit: contain;
 }
