@@ -56,31 +56,6 @@ body{
 	transition: background-color 0.2s ease;
 }
 
-.orangeButton{
-	padding: 10px;
-	margin-top: 20px;
-	width: 30%;
-	min-width: 100px;
-	color: white;
-	background-color: #875330;
-	border: 2px solid #753F1C;
-	border-radius: 10px;
-	transition: background-color 0.2s ease, border-color 0.2s ease;
-}
-.orangeButton:hover{
-	background-color: #AA5C29;
-	cursor: pointer;
-	border: 2px solid #843D11;
-}
-.orangeButton.green{
-	background-color: #60C611;
-	border-color: #4C990D;
-}
-.orangeButton.red{
-	background-color: #BC301E;
-	border-color: #8E261B;
-}
-
 .orangeReadonlyBox{
 	font-family: Consolas;
 	display: block;
@@ -114,12 +89,36 @@ body{
     opacity: 0;
     transition: flex 0.2s ease, opacity 0.2s ease, display 0.2s ease, margin 0.2s ease, padding 0.2s ease;
 }
-
 .orangeCanvas.show{
 	margin: 0 auto;
 	padding: 10px 10px;
 	flex: 1;
     opacity: 1;
+}
+
+.orangeButton{
+	padding: 10px;
+	margin-top: 20px;
+	width: 30%;
+	min-width: 100px;
+	color: white;
+	background-color: #875330;
+	border: 2px solid #753F1C;
+	border-radius: 10px;
+	transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+.orangeButton:hover{
+	background-color: #AA5C29;
+	cursor: pointer;
+	border: 2px solid #843D11;
+}
+.orangeButton.green{
+	background-color: #60C611;
+	border-color: #4C990D;
+}
+.orangeButton.red{
+	background-color: #BC301E;
+	border-color: #8E261B;
 }
 
 .smallButton{
