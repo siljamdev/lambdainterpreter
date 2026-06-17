@@ -53,8 +53,8 @@ document.addEventListener("DOMContentLoaded", function (){
 			}
 			const lam = parseLambda(inputExpression);
 			currentExpression = lam;
-			drawDiagram(currentExpression);
 			represent();
+			drawDiagram(currentExpression);
 		}catch(e){
 			readonlyBox.innerHTML = "Parsing error:<br>" + e;
 			
@@ -116,7 +116,6 @@ document.addEventListener("DOMContentLoaded", function (){
 		reduceOneAsync(currentExpression).then(result => {
 			if(currentExpression === result){
 				evaluating = false;
-				drawDiagram(currentExpression);
 				return;
 			}
 			currentExpression = result;
@@ -202,7 +201,7 @@ document.addEventListener("DOMContentLoaded", function (){
 			return;
 		}
 		const p = document.createElement("div");
-		p.className = "orangeReadonlyBox definePocket";
+		p.className = "definePocket";
 		p.innerHTML = `<input type=text class="orangeInput defineName" oninput="ensureOnlyLetters(this);" placeholder="Name"></input>
 		<input type=text class="orangeInput defineDef" placeholder="Definition"></input>
 		`;

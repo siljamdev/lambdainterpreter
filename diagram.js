@@ -1,5 +1,6 @@
 let doDiagrams = false;
 let diagram = null;
+let imageUrl = null;
 
 async function drawDiagram(expression){
 	if(!doDiagrams){
@@ -7,6 +8,10 @@ async function drawDiagram(expression){
 	}
 	
 	if(expression === null){
+		if(imageUrl){
+			URL.revokeObjectURL(imageUrl);
+			imageUrl = null;
+		}
 		diagram.innerHTML = "";
 		return;
 	}
@@ -15,9 +20,13 @@ async function drawDiagram(expression){
 	
 	const blob = await toBitmap(hlines, vlines);
 	
-	const url = URL.createObjectURL(blob);
+	if(imageUrl){
+		URL.revokeObjectURL(imageUrl);
+	} 
+	
+	imageUrl = URL.createObjectURL(blob);
 	const img = document.createElement("img");
-    img.src = url;
+    img.src = imageUrl;
 	img.classList.add("diagramImage");
 	
 	diagram.innerHTML = "";
